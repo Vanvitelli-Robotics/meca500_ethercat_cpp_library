@@ -1,0 +1,44 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*CMakeFiles*
+*/CMakeFiles
+*.cmake
+*CMakeCache.txt
+*.vscode*
+*/build*
+*./Cycle_time.txt
+*./Data_error.txt
+*./Data_position_Joint6.txt
+*./Data_velocities.txt
+sun_etherCAT/SOEM/build
+sun_etherCAT/SOEM/test
