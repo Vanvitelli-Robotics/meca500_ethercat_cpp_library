@@ -1,10 +1,11 @@
 #include "Robot.hpp"
 
 int main(int argc, char *argv[]) {
-    Robot robot(0,1000,"eno1");
+    Robot robot(0,5000,"eth0");
     robot.reset_error();
     robot.activate();
     robot.home();
+    //robot.main();
     robot.set_conf(1,1,-1);
     robot.move_pose(0,-240,190,90,0,0);
     robot.print_pose();

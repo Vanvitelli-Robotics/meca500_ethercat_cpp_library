@@ -33,7 +33,7 @@ Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds , char* n
     meca500.assign_pointer_struct();
 
     master.movetoState(meca500.getPosition(), EC_STATE_SAFE_OP, EC_TIMEOUT_TO_SAFE_OP);
-    master.createThread(TARGET_CYCLE_TIME_MICROSECONDS * 1e+3);
+    master.createThread(TARGET_CYCLE_TIME_MICROSECONDS*1e+3);
 
     master.movetoState(meca500.getPosition(), EC_STATE_OPERATIONAL, EC_TIMEOUT_TO_SAFE_OP);
 
@@ -111,7 +111,7 @@ void Robot::move_pose(double x, double y, double z, double alpha, double beta, d
 {
     float pose[] = {(float)x, (float)y, (float)z, (float)alpha, (float)beta, (float)gamma};
     meca500.movePose(pose);
-    usleep(1.1 * TARGET_CYCLE_TIME_MICROSECONDS);
+    usleep(0.2e+3);
     while (!block_ended())
     {
         printf("waiting for robot to finish moving\n");
