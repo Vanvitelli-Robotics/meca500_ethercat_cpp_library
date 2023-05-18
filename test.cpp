@@ -1,7 +1,7 @@
 #include "Robot.hpp"
 
 int main(int argc, char *argv[]) {
-    Robot robot(0,1000);
+    Robot robot(0,1000,"eno1");
     robot.reset_error();
     robot.activate();
     robot.home();

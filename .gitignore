@@ -42,3 +42,7 @@
 *./Data_velocities.txt
 sun_etherCAT/SOEM/build
 sun_etherCAT/SOEM/test
+*Makefile*
+*.txt
+robot-test
+!*CMakeLists.txt

@@ -9,13 +9,15 @@
 #include <fstream>
 #include <cmath>
 
-Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds) : POS_LIMIT(pos_limit),
-                                                                          master("eno1", FALSE, EC_TIMEOUT_TO_SAFE_OP), meca500(1, &master), controller(&meca500, 0.5),
+Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds , char* network_interface_in) : POS_LIMIT(pos_limit),
+                                                                          master(network_interface_in, FALSE, EC_TIMEOUT_TO_SAFE_OP), meca500(1, &master), controller(&meca500, 0.5),
                                                                           TARGET_CYCLE_TIME_MICROSECONDS(target_cycle_time_microseconds)
 
 {
     using namespace sun;
     using namespace std;
+
+    sprintf(network_interface,network_interface_in);
 
     std::cout << "SOEM (Simple Open EtherCAT Master)\nStarting master...\n";
 

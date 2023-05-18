@@ -26,12 +26,13 @@ private:
     float position[6] = {0,0,0,0,0,0};
     int activateRob, deactivateRob, homeRob;
     const uint32_t TARGET_CYCLE_TIME_MICROSECONDS;
+    char network_interface[50];
     const double POS_LIMIT;
     static void update_data();
     bool block_ended();
 
 public:
-    Robot(double pos_limit,uint32_t target_cycle_time_microseconds);
+    Robot(double pos_limit,uint32_t target_cycle_time_microseconds,char* network_interface_in);
     int main();
     ~Robot();
     void activate();
