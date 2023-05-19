@@ -23,20 +23,22 @@ private:
     float joint_angles[6];
     float joints[6] = {0, 0, 0, 0, 60, 0};
     float omega[6] = {0, 0, 0, 0, 0, -30};
-    float position[6] = {0,0,0,0,0,0};
+    float position[6] = {0, 0, 0, 0, 0, 0};
     int activateRob, deactivateRob, homeRob;
     const uint32_t TARGET_CYCLE_TIME_MICROSECONDS;
     char network_interface[50];
     const double POS_LIMIT;
     static void update_data();
     bool block_ended();
+    bool movement_ended();
 
 public:
-    Robot(double pos_limit,uint32_t target_cycle_time_microseconds,char* network_interface_in);
-    int main();
+    Robot(double pos_limit,
+          uint32_t target_cycle_time_microseconds,
+          char *network_interface_in,
+          float blending_percentage,
+          float cart_accel_limit);
     ~Robot();
-    void activate();
-    void home();
     void deactivate();
     void reset_error();
     double get_position();
