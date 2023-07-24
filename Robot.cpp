@@ -58,6 +58,9 @@ Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds,
         cout << "error set cart acceleration\n";
     }
 
+    meca500.setJoinVel(600);
+    meca500.setJoinAcc(150);
+
     meca500.activateRobot();
     meca500.home();
 
@@ -102,6 +105,11 @@ double Robot::get_position() // Returning Horizontal position of the Robot
     return pose[0]; // Checking if is the right return
 }
 
+void Robot::get_joints(float* joints) // Returning Horizontal position of the Robot
+{
+    meca500.getJoints(joints);
+}
+
 void Robot::print_pose()
 {
     float pose[6];
@@ -112,11 +120,16 @@ void Robot::print_pose()
     }
 }
 
-void Robot::move_lin_vel_trf(double velocity) // From -1000 mm/s to 1000 mm/s
+void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -1 to 1
 {
     float vel[6] = {0, 0, 0, 0, 0, 0};
-    vel[0] = (float)velocity;
+    vel[0] = (float)velocity * 1e+3;
     meca500.moveLinVelTRF(vel);
+}
+
+void Robot::move_joints_vel(float *w)
+{
+    meca500.moveJointsVel(w);
 }
 
 void Robot::set_conf(short c1, short c2, short c3)

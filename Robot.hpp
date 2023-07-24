@@ -39,10 +39,12 @@ public:
           float blending_percentage,
           float cart_accel_limit);
     ~Robot();
+    void get_joints(float* joints);
     void deactivate();
     void reset_error();
     double get_position();
     void move_lin_vel_trf(double velocity);
+    void move_joints_vel(float* w);
     void set_conf(short c1, short c2, short c3);
     void move_pose(double x, double y, double z, double alpha, double beta, double gamma);
     void print_pose();

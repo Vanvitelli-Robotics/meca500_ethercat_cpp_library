@@ -637,7 +637,7 @@ namespace sun
     {
         //NEL MANUALE RISULTA P<600 ??????
         setMoveID(moveID);
-        if (p > 100 || p < 0)
+        if (p > 150 || p < 0)
             return -1; //Error value of percentage! The value must be 0<p<100
         else
         {
@@ -682,7 +682,7 @@ namespace sun
     int Meca500::setCartAcc(float p, uint16 moveID)
     {
         setMoveID(moveID);
-        if (p > 100 || p < 0.001)
+        if (p > 600 || p < 0.001)
             return -1; //Error value of percentage! The value must be 0.001<p<100.
         else
         {

@@ -1,7 +1,7 @@
 #include "Robot.hpp"
 
 int main(int argc, char *argv[]) {
-    Robot robot(0,5000,"eno1",0.0,100);
+    Robot robot(0,5000,"eth0",0.0,100);
     robot.reset_error();
     //robot.main();
     robot.set_conf(1,1,-1);
