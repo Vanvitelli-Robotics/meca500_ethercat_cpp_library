@@ -8,11 +8,12 @@
 #include <chrono>
 #include <fstream>
 #include <cmath>
+#include "joints_vel.h"
 
 Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds,
              char *network_interface_in,
              float blending_percentage,
-             float cart_accel_limit) : POS_LIMIT(pos_limit),
+             float cart_accel_limit ) : POS_LIMIT(pos_limit),
                                        master(network_interface_in, FALSE, EC_TIMEOUT_TO_SAFE_OP),
                                        meca500(1, &master),
                                        controller(&meca500, 0.5),
@@ -65,6 +66,7 @@ Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds,
     meca500.home();
 
     meca500.setPoint(1);
+    last_pos = 0;
 }
 
 bool Robot::block_ended()
@@ -102,12 +104,15 @@ double Robot::get_position() // Returning Horizontal position of the Robot
 {
     float pose[6];
     meca500.getPose(pose);
-    return pose[0]; // Checking if is the right return
+    return pose[0]*1e-3; // Checking if is the right return
 }
 
 void Robot::get_joints(float* joints) // Returning Horizontal position of the Robot
 {
     meca500.getJoints(joints);
+    for(int i=0;i<6;i++) {
+        joints[i] = joints[i]*M_PI/180.0;
+    }
 }
 
 void Robot::print_pose()
@@ -123,12 +128,32 @@ void Robot::print_pose()
 void Robot::move_lin_vel_trf(double velocity) // input is in m/s, ranging from -1 to 1
 {
     float vel[6] = {0, 0, 0, 0, 0, 0};
+    if(velocity > 0 && get_position()>POS_LIMIT) {
+        velocity = 0;
+    }
+    if(velocity < 0 && get_position()<-POS_LIMIT) {
+        velocity = 0;
+    }
+
     vel[0] = (float)velocity * 1e+3;
     meca500.moveLinVelTRF(vel);
 }
 
+void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from -1 to 1
+{
+    
+    float joints[6];
+    float joints_vel[6];
+    get_joints(joints);
+    get_joints_vel_with_jacobian(velocity,joints,joints_vel);
+    move_joints_vel(joints_vel);
+}
+
 void Robot::move_joints_vel(float *w)
 {
+    for(int i=0;i<6;i++) {
+        w[i] = w[i]*180.0/M_PI;
+    }
     meca500.moveJointsVel(w);
 }
 
@@ -148,4 +173,15 @@ void Robot::move_pose(double x, double y, double z, double alpha, double beta, d
         printf("waiting for robot to finish moving\n");
         usleep(1e+6);
     }
+}
+
+double Robot::get_velocity() {
+    double pos = get_position();
+    double T = TARGET_CYCLE_TIME_MICROSECONDS*1e-6;
+    double tau = costante_tempo_filtro;
+    double vel = -(T-2*tau)/(T+2*tau)*last_vel + 2/(T+2*tau)*pos - 2/(T+2*tau)*last_pos;
+    //vel = (pos-last_pos)/T;
+    last_pos = pos;
+    last_vel = vel;
+    return vel;
 }

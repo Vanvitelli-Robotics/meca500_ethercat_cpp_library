@@ -13,6 +13,7 @@
 #include <mutex>
 #include <thread>
 #include "ethercat.h"
+#include <array>
 
 extern "C"
 {
@@ -36,7 +37,7 @@ namespace sun
         int i=0;
         long int time1;
         long int time2;
-        std::array<long int,50000> timecycle;
+        std::array<int,50000> timecycle;
         long int cycle;
         volatile int wkc;
         int64 cycletime;

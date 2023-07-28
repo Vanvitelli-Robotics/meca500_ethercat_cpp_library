@@ -1,5 +1,7 @@
 project (sun_ethercat_master)
 
+#add_compile_options(-pthread)
+
 set(${PROJECT_NAME}_SOURCES src/Master.cpp)
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 

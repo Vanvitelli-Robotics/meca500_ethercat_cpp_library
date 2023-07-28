@@ -13,6 +13,9 @@
 #include <fstream>
 #include <cmath>
 
+void get_joints_vel_with_jacobian(double velocity,float* joints,float* joints_vel);
+
+
 class Robot
 {
 private:
@@ -24,10 +27,15 @@ private:
     float joints[6] = {0, 0, 0, 0, 60, 0};
     float omega[6] = {0, 0, 0, 0, 0, -30};
     float position[6] = {0, 0, 0, 0, 0, 0};
+    double last_pos = 0;
+    double last_vel = 0;
+
+    double costante_tempo_filtro = 10e-3;
+    const double POS_LIMIT;
+
     int activateRob, deactivateRob, homeRob;
     const uint32_t TARGET_CYCLE_TIME_MICROSECONDS;
     char network_interface[50];
-    const double POS_LIMIT;
     static void update_data();
     bool block_ended();
     bool movement_ended();
@@ -43,7 +51,9 @@ public:
     void deactivate();
     void reset_error();
     double get_position();
+    double get_velocity();
     void move_lin_vel_trf(double velocity);
+    void move_lin_vel_trf_x(double velocity);
     void move_joints_vel(float* w);
     void set_conf(short c1, short c2, short c3);
     void move_pose(double x, double y, double z, double alpha, double beta, double gamma);
