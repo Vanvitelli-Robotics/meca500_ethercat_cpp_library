@@ -51,6 +51,7 @@ public:
     void deactivate();
     void reset_error();
     double get_position();
+    void get_pose(float* x);
     double get_velocity();
     void move_lin_vel_trf(double velocity);
     void move_lin_vel_trf_x(double velocity);

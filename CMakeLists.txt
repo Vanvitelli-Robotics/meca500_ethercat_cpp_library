@@ -4,7 +4,7 @@ project (meca500_driver)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-file(GLOB ${PROJECT_NAME}_SOURCES Robot.cpp joints_vel.cpp)
+file(GLOB ${PROJECT_NAME}_SOURCES *.cpp)
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
 
@@ -17,7 +17,9 @@ add_subdirectory(sun_etherCAT/sun_slave)
 add_subdirectory(sun_etherCAT/sun_controller)
 
 add_executable(robot-test test.cpp)
+add_executable(matrix-test matrix-test.cpp)
 
 target_link_libraries(${PROJECT_NAME} sun_ethercat_master sun_slave sun_controller)
 
 target_link_libraries(robot-test meca500_driver)
+target_link_libraries(matrix-test meca500_driver)

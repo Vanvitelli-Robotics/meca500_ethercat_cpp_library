@@ -59,8 +59,12 @@ Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds,
         cout << "error set cart acceleration\n";
     }
 
+    if (meca500.setJoinAcc(150.0) != 0) //setting joints acc to max
+    {
+        cout << "error set joints acceleration\n";
+    }
+
     meca500.setJoinVel(600);
-    meca500.setJoinAcc(150);
 
     meca500.activateRobot();
     meca500.home();
@@ -107,11 +111,22 @@ double Robot::get_position() // Returning Horizontal position of the Robot
     return pose[0]*1e-3; // Checking if is the right return
 }
 
+void Robot::get_pose(float* x) // Returning Horizontal position of the Robot
+{
+    meca500.getPose(x);
+    for(int i=0;i<3;i++) {
+        x[i]*=1e-3;
+    }
+    for(int i=3;i<6;i++) {
+        x[i] = x[i]*M_PI/180.0;
+    }
+}
+
 void Robot::get_joints(float* joints) // Returning Horizontal position of the Robot
 {
     meca500.getJoints(joints);
     for(int i=0;i<6;i++) {
-        joints[i] = joints[i]*M_PI/180.0;
+        joints[i] = (joints[i]*M_PI)/180.0;
     }
 }
 
@@ -144,15 +159,23 @@ void Robot::move_lin_vel_trf_x(double velocity) // input is in m/s, ranging from
     
     float joints[6];
     float joints_vel[6];
+    float pose[6];
+    if(velocity > 0 && get_position()>POS_LIMIT) {
+        velocity = 0;
+    }
+    if(velocity < 0 && get_position()<-POS_LIMIT) {
+        velocity = 0;
+    }
+    get_pose(pose);
     get_joints(joints);
-    get_joints_vel_with_jacobian(velocity,joints,joints_vel);
+    get_joints_vel_with_jacobian(velocity,joints,joints_vel,pose);
     move_joints_vel(joints_vel);
 }
 
 void Robot::move_joints_vel(float *w)
 {
     for(int i=0;i<6;i++) {
-        w[i] = w[i]*180.0/M_PI;
+        w[i] = (w[i]*180.0)/M_PI;
     }
     meca500.moveJointsVel(w);
 }
