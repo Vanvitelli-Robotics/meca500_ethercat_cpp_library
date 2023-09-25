@@ -10,7 +10,9 @@
 #define DEG_TO_RAD(x) (M_PI * x / 180.0)
 
 const double initial_pose[6] = {0.0, -0.240, 0.190,M_PI_2, 0.0, 0.0};
-const double joints_saturation_speed[6] = {DEG_TO_RAD(150.0),DEG_TO_RAD(150.0),DEG_TO_RAD(180.0),DEG_TO_RAD(300.0),DEG_TO_RAD(300.0),DEG_TO_RAD(500.0)};
+const double joints_saturation_speed[6] = {DEG_TO_RAD(150.0),DEG_TO_RAD(150.0),DEG_TO_RAD(180.0),DEG_TO_RAD(300.0),
+DEG_TO_RAD(300.0),DEG_TO_RAD(500.0)};
+const double pose_tolerance[6] = {0.2,0.02,0.02,5,5,5};
 double T = 4e-3;
 const double gamma_coeff = (0.1)/T;
 CsvLoggerFeedback csvLoggerFeedback("feedback.csv");
@@ -70,6 +72,7 @@ void get_joints_vel_with_jacobian(double velocity_x, float *joints, float *joint
     for(int i=1;i<6;i++) {
         velocity[i] = gamma_coeff*error_v[i];
     }
+
     // print_matrix_rowmajor("desired cartesian vel",6,1,velocity);
     for(int i=0;i<6;i++) {
         csvLoggerFeedback << velocity[i];
@@ -92,6 +95,13 @@ void get_joints_vel_with_jacobian(double velocity_x, float *joints, float *joint
             double k = joints_saturation_speed[i]/joints_vel[i];
             for(int j=0;j<6;j++) {
                 joints_vel[j] *= k;
+            }
+        }
+    }
+    for(int i=0;i<6;i++) {
+        if(fabs(pose[i]-initial_pose[i])>pose_tolerance[i]) {
+            for(int i=0;i<6;i++) {
+                joints_vel[i] = 0.0;
             }
         }
     }
