@@ -1,6 +1,6 @@
 #include "CsvLoggerFeedback.hpp"
 
-//#define LOGGING_DISABLED TRUE
+#define LOGGING_DISABLED TRUE
 
 CsvLoggerFeedback::CsvLoggerFeedback(const std::string filename) : FILENAME(filename.c_str())
 {
