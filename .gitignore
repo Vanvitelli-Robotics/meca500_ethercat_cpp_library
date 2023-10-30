@@ -47,3 +47,4 @@ sun_etherCAT/SOEM/test
 robot-test
 !*CMakeLists.txt
 matrix-test
+build/*

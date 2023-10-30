@@ -1,5 +1,7 @@
 #include "matrix_tools.h"
 #include <math.h>
+#include <Eigen/Core>
+#include <Eigen/Dense>
 
 const double alpha = 0.4;
 const int gradient_descent_iterations = 1000;
@@ -68,8 +70,14 @@ void transpose(double *M, int rows, int cols, double *Mt)
 }
 
 void solve_linear_system_6(double* A, double* c, double* b) {
-    //gaussian_elimination_6(A,c,b);
-    gradient_descent_6(A,c,b);
+  using namespace Eigen;
+   Map<Matrix<double,6,6,RowMajor> > M_A(A);
+   Map<Matrix<double,6,1,ColMajor> > M_C(c);
+   Eigen::Matrix<double, 6, 1> M_B= M_A.colPivHouseholderQr().solve(M_C);
+   double *result = M_B.data();
+   for(int i=0;i<6;i++) {
+    b[i] = result[i];
+   }
 }
 
 void gradient_descent_6(double* J, double* c, double* b) {

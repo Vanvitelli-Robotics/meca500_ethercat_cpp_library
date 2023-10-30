@@ -70,7 +70,7 @@ Robot::Robot(double pos_limit, uint32_t target_cycle_time_microseconds,
     meca500.home();
 
     meca500.setPoint(1);
-    last_pos = 0;
+    last_pos = get_position();
 }
 
 bool Robot::block_ended()

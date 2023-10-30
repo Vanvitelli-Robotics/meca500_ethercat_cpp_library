@@ -13,8 +13,11 @@ const double initial_pose[6] = {0.0, -0.240, 0.190,M_PI_2, 0.0, 0.0};
 const double joints_saturation_speed[6] = {DEG_TO_RAD(150.0),DEG_TO_RAD(150.0),DEG_TO_RAD(180.0),DEG_TO_RAD(300.0),
 DEG_TO_RAD(300.0),DEG_TO_RAD(500.0)};
 const double pose_tolerance[6] = {0.2,0.02,0.02,5,5,5};
-double T = 4e-3;
-const double gamma_coeff = (0.1)/T;
+double T = 2e-3;
+const double robot_delay = 25e-3;
+//const double gamma_coeff = (0.05)/T;
+const double gamma_coeff = 0.7/robot_delay;
+const double max_velocity_magnitude_square = 1;
 CsvLoggerFeedback csvLoggerFeedback("feedback.csv");
 vanvitelli::UnitQuaternion<double> qd; //test
 vanvitelli::UnitQuaternion<double> q_current;
@@ -68,6 +71,14 @@ void get_joints_vel_with_jacobian(double velocity_x, float *joints, float *joint
     // print_matrix_rowmajor("T(phi)*phi",3,1,T_phi_m_phi_err);
     concat_vertically(pos_err,phi_err,1,3,3,error_v);
     // print_matrix_rowmajor("error vector",6,1,error_v);
+
+    //for(int i=1;i<6;i++) {
+    //    if(fabs(pose[i]-initial_pose[i])>pose_tolerance[i]*0.5) {
+    //        velocity_x = 0.0;
+    //    }
+    //}
+
+
     velocity[0] = velocity_x;
     for(int i=1;i<6;i++) {
         velocity[i] = gamma_coeff*error_v[i];
@@ -80,7 +91,7 @@ void get_joints_vel_with_jacobian(double velocity_x, float *joints, float *joint
     jacobian_meca(joints[0], joints[1], joints[2], joints[3], joints[4], joints[5], buffer);
     transpose(buffer,6,6,jacobian);
     // print_matrix_rowmajor("jacobiano",6,6,jacobian);
-    gaussian_elimination_6(jacobian,velocity,joints_vel_d);
+    solve_linear_system_6(jacobian,velocity,joints_vel_d);
     /*
         Going back to robot convention for velocities
     */
@@ -98,9 +109,11 @@ void get_joints_vel_with_jacobian(double velocity_x, float *joints, float *joint
             }
         }
     }
+    uint8_t out_of_range = 0;
     for(int i=0;i<6;i++) {
         if(fabs(pose[i]-initial_pose[i])>pose_tolerance[i]) {
             for(int i=0;i<6;i++) {
+                out_of_range = 1;
                 joints_vel[i] = 0.0;
             }
         }
@@ -111,6 +124,7 @@ void get_joints_vel_with_jacobian(double velocity_x, float *joints, float *joint
     for(int i=0;i<6;i++) {
         csvLoggerFeedback << joints[i];
     }
+    csvLoggerFeedback << out_of_range;
     csvLoggerFeedback.end_row();
     // print_matrix_rowmajor("joints_v",6,1,joints_vel_d);
     // print_matrix_rowmajor_f("joints_v saturata",6,1,joints_vel);
